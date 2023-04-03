@@ -13,7 +13,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('GEOMETRY', $statements[0]);
+        $this->assertStringContainsString('GEOMETRY', $statements[0]);
     }
 
     public function testAddingPoint()
@@ -23,7 +23,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('POINT', $statements[0]);
+        $this->assertStringContainsString('POINT', $statements[0]);
     }
 
     public function testAddingLinestring()
@@ -33,7 +33,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('LINESTRING', $statements[0]);
+        $this->assertStringContainsString('LINESTRING', $statements[0]);
     }
 
     public function testAddingPolygon()
@@ -43,7 +43,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('POLYGON', $statements[0]);
+        $this->assertStringContainsString('POLYGON', $statements[0]);
     }
 
     public function testAddingMultipoint()
@@ -53,7 +53,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('MULTIPOINT', $statements[0]);
+        $this->assertStringContainsString('MULTIPOINT', $statements[0]);
     }
 
     public function testAddingMultiLinestring()
@@ -63,7 +63,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('MULTILINESTRING', $statements[0]);
+        $this->assertStringContainsString('MULTILINESTRING', $statements[0]);
     }
 
     public function testAddingMultiPolygon()
@@ -73,7 +73,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('MULTIPOLYGON', $statements[0]);
+        $this->assertStringContainsString('MULTIPOLYGON', $statements[0]);
     }
 
     public function testAddingGeometryCollection()
@@ -83,7 +83,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $statements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(1, count($statements));
-        $this->assertContains('GEOMETRYCOLLECTION', $statements[0]);
+        $this->assertStringContainsString('GEOMETRYCOLLECTION', $statements[0]);
     }
 
     public function testAddRemoveSpatialIndex()
@@ -94,7 +94,7 @@ class MySqlGrammarBaseTest extends BaseTestCase
         $addStatements = $blueprint->toSql($this->getConnection(), $this->getGrammar());
 
         $this->assertEquals(2, count($addStatements));
-        $this->assertContains('alter table `test` add spatial `test_foo_spatial`(`foo`)', $addStatements[1]);
+        $this->assertStringContainsString('alter table `test` add spatial `test_foo_spatial`(`foo`)', $addStatements[1]);
 
         $blueprint->dropSpatialIndex(['foo']);
         $blueprint->dropSpatialIndex('test_foo_spatial');
@@ -102,8 +102,8 @@ class MySqlGrammarBaseTest extends BaseTestCase
 
         $expectedSql = 'alter table `test` drop index `test_foo_spatial`';
         $this->assertEquals(5, count($dropStatements));
-        $this->assertContains($expectedSql, $dropStatements[3]);
-        $this->assertContains($expectedSql, $dropStatements[4]);
+        $this->assertStringContainsString($expectedSql, $dropStatements[3]);
+        $this->assertStringContainsString($expectedSql, $dropStatements[4]);
     }
 
     /**

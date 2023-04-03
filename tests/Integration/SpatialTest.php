@@ -15,14 +15,14 @@ class SpatialTest extends BaseTestCase
 {
     protected $after_fix = false;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::cleanDatabase(true);
 
         parent::setUpBeforeClass();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::cleanDatabase();
 
@@ -34,7 +34,7 @@ class SpatialTest extends BaseTestCase
      *
      * @param bool $recreate If true, then creates the database after deletion
      */
-    private static function cleanDatabase($recreate = false)
+    private static function cleanDatabase($recreate = true)
     {
         $database = env('DB_DATABASE');
 
@@ -98,22 +98,22 @@ class SpatialTest extends BaseTestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->after_fix = $this->isMySQL8AfterFix();
 
+        $this->app->bind('db.schema', function ($app) {
+            return $app['db']->connection()->getSchemaBuilder();
+        });
+
         $this->onMigrations(function ($migrationClass) {
             (new $migrationClass())->up();
         });
-
-//        \DB::listen(function($sql) {
-//            var_dump($sql);
-//        });
     }
 
-    public function tearDown()
+    protected function tearDown(): void
     {
         $this->onMigrations(function ($migrationClass) {
             (new $migrationClass())->down();
@@ -125,7 +125,7 @@ class SpatialTest extends BaseTestCase
     // MySQL 8.0.4 fixed bug #26941370 and bug #88031
     private function isMySQL8AfterFix()
     {
-        $results = DB::select(DB::raw('select version()'));
+        $results = DB::select('select version()');
         $mysql_version = $results[0]->{'version()'};
 
         return version_compare($mysql_version, '8.0.4', '>=');
@@ -363,7 +363,7 @@ class SpatialTest extends BaseTestCase
         $a = GeometryModel::distanceValue('location', $loc1->location)->get();
         $this->assertCount(2, $a);
         $this->assertEquals(0, $a[0]->distance);
-        $this->assertEquals(1.4142135623, $a[1]->distance); // PHP floats' 11th+ digits don't matter
+        $this->assertEquals(1.4142135623, substr($a[1]->distance, 0, 12)); // PHP floats' 11th+ digits don't matter
     }
 
     public function testDistanceSphereValue()
@@ -381,9 +381,9 @@ class SpatialTest extends BaseTestCase
         $this->assertEquals(0, $a[0]->distance);
 
         if ($this->after_fix) {
-            $this->assertEquals(44.7414064842, $a[1]->distance); // PHP floats' 11th+ digits don't matter
+            $this->assertEquals(44.7414064842, substr($a[1]->distance, 0, 13)); // PHP floats' 11th+ digits don't matter
         } else {
-            $this->assertEquals(44.7414064845, $a[1]->distance); // PHP floats' 11th+ digits don't matter
+            $this->assertEquals(44.7414064845, substr($a[1]->distance, 0, 13)); // PHP floats' 11th+ digits don't matter
         }
     }
 

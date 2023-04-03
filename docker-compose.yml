@@ -1,10 +1,66 @@
-version: '3.3'
+version: '3.7'
+
 services:
+  # ==============================================
+  # Laravel Application Containers
+  # ==============================================
+
+  # Apache / PHP
+  web:
+    image: webwhales/for-laravel-apache:php8.1
+    hostname: localhost
+    restart: unless-stopped
+    volumes:
+      - ./.docker/conf/apache-site.conf:/etc/apache2/sites-available/000-default.conf
+      - ./.docker/conf/php-site.ini:/usr/local/etc/php/conf.d/site.ini
+      - ./.docker/conf/supervisor-site.conf:/etc/supervisor/conf.d/site.conf
+      - ./.docker/logs/apache:/var/log/apache2
+      - ./:/var/www/html
+    ports:
+      - "${APP_PORT:-8080}:80"
+    links:
+      - db
+
+  # MySQL
   db:
-      image: mysql:5.7
-      ports:
-        - "3306:3306"
-      environment:
-        MYSQL_DATABASE: 'spatial_test'
-        MYSQL_ROOT_PASSWORD: ''
-        MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    image: mariadb:10.5
+    restart: unless-stopped
+    volumes:
+      - ./.docker/conf/mysql/docker-entrypoint-initdb.d/create_test_database.sql:/docker-entrypoint-initdb.d/create_test_database.sql
+      - db_volume:/var/lib/mysql
+      - ./.docker/logs/mysql:/var/log/mysql
+    environment:
+      # When changing the MYSQL_USER value, don't forget to change it also in the following file:
+      #  .docker/conf/mysql/docker-entrypoint-initdb.d/create_test_database.sql
+      MYSQL_ROOT_PASSWORD: "KxxLtk8GoI0Fx7JkCWBDZQGW9CPFJjC1"
+      MYSQL_DATABASE: "laravel_db"
+      MYSQL_USER: "laravel_db_user"
+      MYSQL_PASSWORD: "laravel_db_pass"
+    ports:
+      - "${DB_PORT_CONTAINER:-3306}:3306"
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: pma.localhost
+    restart: unless-stopped
+    volumes:
+      - ./.docker/conf/phpmyadmin-config.php:/etc/phpmyadmin/config.user.inc.php
+      - ./.docker/data/phpmyadmin/sessions:/sessions
+      - ./.docker/data/phpmyadmin/uploads:/var/uploads
+    ports:
+      - "${DB_PORT_PHPMYADMIN:-8081}:80"
+    environment:
+      PMA_ARBITRARY: "1"
+      PMA_HOST: "db"
+      PMA_USER: "root"
+      PMA_PASSWORD: "KxxLtk8GoI0Fx7JkCWBDZQGW9CPFJjC1"
+    links:
+      - db
+
+
+# ==============================================
+# Volumes
+# ==============================================
+volumes:
+  db_volume:

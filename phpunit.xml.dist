@@ -36,10 +36,10 @@
         <env name="CACHE_DRIVER" value="array"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="QUEUE_DRIVER" value="sync"/>
-        <env name="DB_DATABASE" value="spatial_test"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
+        <env name="DB_DATABASE" value="laravel_db"/>
+        <env name="DB_HOST" value="db"/>
         <env name="DB_PORT" value="3306"/>
-        <env name="DB_USERNAME" value="root"/>
-        <env name="DB_PASSWORD" value=""/>
+        <env name="DB_USERNAME" value="laravel_db_user"/>
+        <env name="DB_PASSWORD" value="laravel_db_pass"/>
     </php>
 </phpunit>

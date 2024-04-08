@@ -1,16 +1,16 @@
 <?php
 
-namespace Eloquent;
+namespace Grimzy\LaravelMysqlSpatial\Tests\Unit\Eloquent;
 
-use BaseTestCase;
 use Grimzy\LaravelMysqlSpatial\Eloquent\Builder;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialExpression;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
-use Grimzy\LaravelMysqlSpatial\MysqlConnection;
+use Grimzy\LaravelMysqlSpatial\Tests\BaseTestCase;
 use Grimzy\LaravelMysqlSpatial\Types\LineString;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Grimzy\LaravelMysqlSpatial\Types\Polygon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\MySqlConnection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Grammars\MySqlGrammar;
 use Mockery;
@@ -22,6 +22,8 @@ class BuilderTest extends BaseTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $connection = Mockery::mock(MysqlConnection::class)->makePartial();
         $grammar = Mockery::mock(MySqlGrammar::class)->makePartial();
         $this->queryBuilder = Mockery::mock(QueryBuilder::class, [$connection, $grammar]);

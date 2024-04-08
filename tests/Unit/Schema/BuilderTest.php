@@ -1,11 +1,11 @@
 <?php
 
-namespace Schema;
+namespace Grimzy\LaravelMysqlSpatial\Tests\Unit\Schema;
 
-use BaseTestCase;
-use Grimzy\LaravelMysqlSpatial\MysqlConnection;
 use Grimzy\LaravelMysqlSpatial\Schema\Blueprint;
 use Grimzy\LaravelMysqlSpatial\Schema\Builder;
+use Grimzy\LaravelMysqlSpatial\Tests\BaseTestCase;
+use Illuminate\Database\MySqlConnection;
 use Mockery;
 
 class BuilderTest extends BaseTestCase

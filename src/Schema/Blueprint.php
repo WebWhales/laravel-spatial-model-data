@@ -3,128 +3,63 @@
 namespace Grimzy\LaravelMysqlSpatial\Schema;
 
 use Illuminate\Database\Schema\Blueprint as IlluminateBlueprint;
+use Illuminate\Database\Schema\ColumnDefinition;
 
 class Blueprint extends IlluminateBlueprint
 {
     /**
-     * Add a geometry column on the table.
-     *
-     * @param string $column
-     *
-     * @return \Illuminate\Support\Fluent
-     */
-    public function geometry($column)
-    {
-        return $this->addColumn('geometry', $column);
-    }
-
-    /**
      * Add a point column on the table.
-     *
-     * @param string   $column
-     * @param null|int $srid
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function point($column, $srid = null)
+    public function point(string $column, int $srid = 0): ColumnDefinition
     {
-        return $this->addColumn('point', $column, compact('srid'));
+        return $this->geography($column, subtype: 'point', srid: $srid);
     }
 
     /**
      * Add a linestring column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function lineString($column)
+    public function lineString(string $column): ColumnDefinition
     {
-        return $this->addColumn('linestring', $column);
+        return $this->geometry($column, subtype: 'linestring');
     }
 
     /**
      * Add a polygon column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function polygon($column)
+    public function polygon(string $column): ColumnDefinition
     {
-        return $this->addColumn('polygon', $column);
+        return $this->geometry($column, subtype: 'polygon');
     }
 
     /**
      * Add a multipoint column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function multiPoint($column)
+    public function multiPoint($column): ColumnDefinition
     {
-        return $this->addColumn('multipoint', $column);
+        return $this->geometry($column, subtype: 'multipoint');
     }
 
     /**
      * Add a multilinestring column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function multiLineString($column)
+    public function multiLineString($column): ColumnDefinition
     {
-        return $this->addColumn('multilinestring', $column);
+        return $this->geometry($column, subtype: 'multilinestring');
     }
 
     /**
      * Add a multipolygon column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function multiPolygon($column)
+    public function multiPolygon($column): ColumnDefinition
     {
-        return $this->addColumn('multipolygon', $column);
+        return $this->geometry($column, subtype: 'multipolygon');
     }
 
     /**
      * Add a geometrycollection column on the table.
-     *
-     * @param $column
-     *
-     * @return \Illuminate\Support\Fluent
      */
-    public function geometryCollection($column)
+    public function geometryCollection($column): ColumnDefinition
     {
-        return $this->addColumn('geometrycollection', $column);
-    }
-
-    /**
-     * Specify a spatial index for the table.
-     *
-     * @param string|array $columns
-     * @param string       $name
-     *
-     * @return \Illuminate\Support\Fluent
-     */
-    public function spatialIndex($columns, $name = null)
-    {
-        return $this->indexCommand('spatial', $columns, $name);
-    }
-
-    /**
-     * Indicate that the given index should be dropped.
-     *
-     * @param string|array $index
-     *
-     * @return \Illuminate\Support\Fluent
-     */
-    public function dropSpatialIndex($index)
-    {
-        return $this->dropIndexCommand('dropIndex', 'spatial', $index);
+        return $this->geometry($column, subtype: 'geometrycollection');
     }
 }

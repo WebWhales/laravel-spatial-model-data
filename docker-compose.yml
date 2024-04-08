@@ -7,7 +7,7 @@ services:
 
   # Apache / PHP
   web:
-    image: webwhales/for-laravel-apache:php8.1
+    image: webwhales/for-laravel-apache:php8.2
     hostname: localhost
     restart: unless-stopped
     volumes:
@@ -17,7 +17,7 @@ services:
       - ./.docker/logs/apache:/var/log/apache2
       - ./:/var/www/html
     ports:
-      - "${APP_PORT:-8080}:80"
+      - "${APP_PORT:-8070}:80"
     links:
       - db
 

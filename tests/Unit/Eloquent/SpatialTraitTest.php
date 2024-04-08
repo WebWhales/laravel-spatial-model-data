@@ -1,12 +1,15 @@
 <?php
 
+namespace Grimzy\LaravelMysqlSpatial\Tests\Unit\Eloquent;
+
 use Grimzy\LaravelMysqlSpatial\Exceptions\SpatialFieldsNotDefinedException;
-use Grimzy\LaravelMysqlSpatial\MysqlConnection;
+use Grimzy\LaravelMysqlSpatial\Tests\BaseTestCase;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Events\QueryExecuted;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Illuminate\Database\MySqlConnection;
 use Mockery as m;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use PDO;
 
 class SpatialTraitTest extends BaseTestCase
 {
@@ -19,12 +22,16 @@ class SpatialTraitTest extends BaseTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->model = new TestModel();
     }
 
     protected function tearDown(): void
     {
         $this->model->getConnection()->getPdo()->resetQueries();
+
+        unset($this->model);
     }
 
     public function testInsertUpdatePointHasCorrectSql()

@@ -2,21 +2,13 @@
 
 namespace Grimzy\LaravelMysqlSpatial;
 
-use Doctrine\DBAL\Types\Type as DoctrineType;
-use Grimzy\LaravelMysqlSpatial\Connectors\ConnectionFactory;
-use Grimzy\LaravelMysqlSpatial\Doctrine\Geometry;
-use Grimzy\LaravelMysqlSpatial\Doctrine\GeometryCollection;
-use Grimzy\LaravelMysqlSpatial\Doctrine\LineString;
-use Grimzy\LaravelMysqlSpatial\Doctrine\MultiLineString;
-use Grimzy\LaravelMysqlSpatial\Doctrine\MultiPoint;
-use Grimzy\LaravelMysqlSpatial\Doctrine\MultiPolygon;
-use Grimzy\LaravelMysqlSpatial\Doctrine\Point;
-use Grimzy\LaravelMysqlSpatial\Doctrine\Polygon;
+use Illuminate\Database\Connectors\ConnectionFactory;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Database\DatabaseServiceProvider;
+use Illuminate\Database\Schema\Blueprint;
 
 /**
- * Class DatabaseServiceProvider.
+ * Class SpatialServiceProvider.
  */
 class SpatialServiceProvider extends DatabaseServiceProvider
 {
@@ -41,24 +33,32 @@ class SpatialServiceProvider extends DatabaseServiceProvider
             return new DatabaseManager($app, $app['db.factory']);
         });
 
-        if (class_exists(DoctrineType::class)) {
-            // Prevent geometry type fields from throwing a 'type not found' error when changing them
-            $geometries = [
-                'geometry'           => Geometry::class,
-                'point'              => Point::class,
-                'linestring'         => LineString::class,
-                'polygon'            => Polygon::class,
-                'multipoint'         => MultiPoint::class,
-                'multilinestring'    => MultiLineString::class,
-                'multipolygon'       => MultiPolygon::class,
-                'geometrycollection' => GeometryCollection::class,
-            ];
-            $typeNames = array_keys(DoctrineType::getTypesMap());
-            foreach ($geometries as $type => $class) {
-                if (!in_array($type, $typeNames)) {
-                    DoctrineType::addType($type, $class);
-                }
-            }
-        }
+        Blueprint::macro('point', function ($column, $srid = 0) {
+            return $this->geography($column, subtype: 'point', srid: $srid);
+        });
+
+        Blueprint::macro('lineString', function ($column) {
+            return $this->geometry($column, subtype: 'linestring');
+        });
+
+        Blueprint::macro('polygon', function ($column) {
+            return $this->geometry($column, subtype: 'polygon');
+        });
+
+        Blueprint::macro('multiPoint', function ($column) {
+            return $this->geography($column, subtype: 'multipoint');
+        });
+
+        Blueprint::macro('multiLineString', function ($column) {
+            return $this->geometry($column, subtype: 'multilinestring');
+        });
+
+        Blueprint::macro('multiPolygon', function ($column) {
+            return $this->geometry($column, subtype: 'multipolygon');
+        });
+
+        Blueprint::macro('geometryCollection', function ($column) {
+            return $this->geometry($column, subtype: 'geometrycollection');
+        });
     }
 }

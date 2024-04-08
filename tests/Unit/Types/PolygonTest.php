@@ -1,5 +1,8 @@
 <?php
 
+namespace Grimzy\LaravelMysqlSpatial\Tests\Unit\Types;
+
+use Grimzy\LaravelMysqlSpatial\Tests\BaseTestCase;
 use Grimzy\LaravelMysqlSpatial\Types\LineString;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Grimzy\LaravelMysqlSpatial\Types\Polygon;
@@ -10,6 +13,8 @@ class PolygonTest extends BaseTestCase
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $collection = new LineString(
             [
                 new Point(0, 0),
